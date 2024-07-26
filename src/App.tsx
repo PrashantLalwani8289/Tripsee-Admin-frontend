@@ -10,15 +10,20 @@ import {
 } from '@chakra-ui/react';
 import initialTheme from './theme/theme'; //  { themeGreen }
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from './State Management/Store/Store';
+import rootReducer from 'State Management/Actions/rootReducer';
+
 // Chakra imports
 
 export default function Main() {
   // eslint-disable-next-line
+  const isAuthenticated = useSelector((state : RootState) => state.root.isAuthenticated)
   const [currentTheme, setCurrentTheme] = useState(initialTheme);
   return (
     <ChakraProvider theme={currentTheme}>
       <Routes>
-        <Route path="auth/*" element={<AuthLayout />} />
+        <Route path="auth/*" element={<AuthLayout isAuthenticated={isAuthenticated} />} />
         <Route
           path="admin/*"
           element={

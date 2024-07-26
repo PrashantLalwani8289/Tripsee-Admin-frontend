@@ -6,13 +6,17 @@ import Navbar from 'components/navbar/NavbarAdmin';
 import Sidebar from 'components/sidebar/Sidebar';
 import { SidebarContext } from 'contexts/SidebarContext';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import routes from 'routes';
+import PrivateRoute from 'routes/PrivateRoutes';
+import { RootState } from '../../State Management/Store/Store';
 
 // Custom Chakra theme
 export default function Dashboard(props: { [x: string]: any }) {
   const { ...rest } = props;
   // states and functions
+  const isAuthenticated = useSelector((state:RootState) => state.root.isAuthenticated)
   const [fixed] = useState(false);
   const [toggleSidebar, setToggleSidebar] = useState(false);
   // functions for changing the states from components
@@ -56,7 +60,7 @@ export default function Dashboard(props: { [x: string]: any }) {
     return routes.map((route: RoutesType, key: any) => {
       if (route.layout === '/admin') {
         return (
-          <Route path={`${route.path}`} element={route.component} key={key} />
+          <Route path={`${route.path}`} element={<PrivateRoute isAuthenticated={isAuthenticated} element={route.component}/>} key={key} />
         );
       } else {
         return null;
@@ -112,10 +116,10 @@ export default function Dashboard(props: { [x: string]: any }) {
             >
               <Routes>
                 {getRoutes(routes)}
-                <Route
+                {/* <Route
                   path="/"
                   element={<Navigate to="/admin/default" replace />}
-                />
+                /> */}
               </Routes>
             </Box>
           ) : null}

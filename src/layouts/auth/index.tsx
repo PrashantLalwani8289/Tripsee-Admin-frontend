@@ -7,10 +7,15 @@ import { Box, useColorModeValue } from '@chakra-ui/react';
 
 // Layout components
 import { SidebarContext } from 'contexts/SidebarContext';
-
+import PrivateRoute from 'routes/PrivateRoutes';
+import PublicRoute from 'routes/PublicRoutes';
+interface AuthProps{
+  isAuthenticated:boolean
+}
 // Custom Chakra theme
-export default function Auth() {
+export default function Auth(props:AuthProps) {
   // states and functions
+  console.log(props)
   const [toggleSidebar, setToggleSidebar] = useState(false);
   const getRoute = () => {
     return window.location.pathname !== '/auth/full-screen-maps';
@@ -19,7 +24,7 @@ export default function Auth() {
     return routes.map((route: RoutesType, key: any) => {
       if (route.layout === '/auth') {
         return (
-          <Route path={`${route.path}`} element={route.component} key={key} />
+          <Route path={`${route.path}`} element={ <PublicRoute isAuthenticated={props.isAuthenticated} element={route.component} />} key={key} />
         );
       } else {
         return null;
@@ -52,10 +57,10 @@ export default function Auth() {
             <Box mx="auto" minH="100vh">
               <Routes>
                 {getRoutes(routes)}
-                <Route
+                {/* <Route
                   path="/"
                   element={<Navigate to="/auth/sign-in/default" replace />}
-                />
+                /> */}
               </Routes>
             </Box>
           ) : null}
