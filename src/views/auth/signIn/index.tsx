@@ -1,7 +1,3 @@
-import React, { useState } from "react";
-import { useDispatch } from 'react-redux'
-import { Link } from "react-router-dom";
-import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import {
   Box,
   Button,
@@ -15,25 +11,28 @@ import {
   InputGroup,
   InputRightElement,
   Text,
-  useColorModeValue,
+  useColorModeValue
 } from "@chakra-ui/react";
+import { yupResolver } from '@hookform/resolvers/yup';
+import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 import { HSeparator } from "components/separator/Separator";
-import { FcGoogle } from "react-icons/fc";
+import { toastMessageError, toastMessageSuccess } from "components/utilities/CommonToastMessages";
+import { ROUTES } from "constants/routes";
+import { ILoginSchema, Token } from "Interface/authInterface";
+import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { RiEyeCloseLine } from "react-icons/ri";
-import { useForm, Controller } from "react-hook-form"
-import { ILoginSchema, Token } from "Interface/authInterface";
-import { yupResolver } from '@hookform/resolvers/yup';
-import { mode } from '@chakra-ui/theme-tools';
-import { loginSchema } from "ValidationSchema/Auth";
+import { useDispatch } from 'react-redux';
+import { Link, useNavigate } from "react-router-dom";
 import { googleSignin, login } from "services/authService";
-import { toastMessageError, toastMessageSuccess } from "components/utilities/CommonToastMessages";
 import { setUser } from "State Management/Actions/rootReducer";
-import { ROUTES } from "constants/routes";
+import { loginSchema } from "ValidationSchema/Auth";
 
 type ButtonStyle = { bg: string };
 
 function SignIn() {
+  const navigate = useNavigate()
   const textColor = useColorModeValue("navy.700", "white");
   const textColorSecondary = "gray.400";
   const textColorDetails = useColorModeValue("navy.700", "secondaryGray.600");
@@ -68,8 +67,8 @@ function SignIn() {
       toastMessageSuccess("login successful")
       console.log(response.data.user)
       dispatch(setUser(response.data.user))
+      navigate(ROUTES.SIGNUP)
     } else {
-      // Display error message
       toastMessageError("login failed")
     }
 
@@ -159,7 +158,7 @@ function SignIn() {
               or
             </Text>
             <HSeparator />
-          </Flex>
+          </Flex> 
           <form onSubmit={handleSubmit(onDataSubmit)}>
 
 

@@ -31,6 +31,7 @@ import { toastMessageError, toastMessageSuccess } from "components/utilities/Com
 import { setUser } from "State Management/Actions/rootReducer";
 // import endpoints from "constants/endpoints";
 import { ROUTES } from "constants/routes";
+import Auth from '../../../layouts/auth/index';
 
 type ButtonStyle = { bg: string };
 

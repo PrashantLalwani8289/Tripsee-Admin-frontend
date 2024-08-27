@@ -8,7 +8,7 @@ export default function Default(props: {
 	endContent?: JSX.Element;
 	name: string;
 	growth?: string | number;
-	value: string | number;
+	value: string | number ;
 }) {
 	const { startContent, endContent, name, growth, value } = props;
 	const textColor = useColorModeValue('secondaryGray.900', 'white');

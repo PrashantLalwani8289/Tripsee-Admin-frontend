@@ -1,35 +1,18 @@
-/*!
-  _   _  ___  ____  ___ ________  _   _   _   _ ___   
- | | | |/ _ \|  _ \|_ _|__  / _ \| \ | | | | | |_ _| 
- | |_| | | | | |_) || |  / / | | |  \| | | | | || | 
- |  _  | |_| |  _ < | | / /| |_| | |\  | | |_| || |
- |_| |_|\___/|_| \_\___/____\___/|_| \_|  \___/|___|
-                                                                                                                                                                                                                                                                                                                                       
-=========================================================
-* Horizon UI - v1.1.0
-=========================================================
 
-* Product Page: https://www.horizon-ui.com/
-* Copyright 2022 Horizon UI (https://www.horizon-ui.com/)
-
-* Designed and Coded by Simmmple
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
-
-// Chakra imports
-import { Avatar, Box, Flex, FormLabel, Icon, Select, SimpleGrid, useColorModeValue } from '@chakra-ui/react';
+import { Box, Icon, SimpleGrid, useColorModeValue } from '@chakra-ui/react';
 // Assets
-import Usa from 'assets/img/dashboards/usa.png';
 // Custom components
 import MiniCalendar from 'components/calendar/MiniCalendar';
 import MiniStatistics from 'components/card/MiniStatistics';
 import IconBox from 'components/icons/IconBox';
-import { MdAddTask, MdAttachMoney, MdBarChart, MdFileCopy } from 'react-icons/md';
-import CheckTable from 'views/admin/rtl/components/CheckTable';
+import { DocumentIcon, PersonIcon } from 'components/icons/Icons';
+import { toastMessageError } from 'components/utilities/CommonToastMessages';
+import { miniCard } from 'Interface/adminDashboard';
+import { useEffect, useState } from 'react';
+import { MdAddTask } from 'react-icons/md';
+import { useSelector } from 'react-redux';
+import { getMiniCardsDetails } from 'services/dashboardDetails';
+import { RootState } from 'State Management/Store/Store';
 import ComplexTable from 'views/admin/default/components/ComplexTable';
 import DailyTraffic from 'views/admin/default/components/DailyTraffic';
 import PieCard from 'views/admin/default/components/PieCard';
@@ -38,25 +21,66 @@ import TotalSpent from 'views/admin/default/components/TotalSpent';
 import WeeklyRevenue from 'views/admin/default/components/WeeklyRevenue';
 import tableDataCheck from 'views/admin/default/variables/tableDataCheck';
 import tableDataComplex from 'views/admin/default/variables/tableDataComplex';
-
+import CheckTable from 'views/admin/rtl/components/CheckTable';
 export default function UserReports() {
 	// Chakra Color Mode
+	const token = useSelector((state: RootState) => state.root.user.token)
+
+	const [miniCards, setMiniCards] = useState<miniCard>({
+		total_blogs: 0,
+		verified_blogs: 0,
+		unverified_blogs: 0,
+		total_users: 0,
+		active_users: 0,
+		inactive_users: 0,
+	  });
+	const [loadingMiniCards, setLoadingMiniCards] = useState<boolean>(false)
+	const getminicardsDetials = async () => {
+		setLoadingMiniCards(true)
+		const response = await getMiniCardsDetails(token as string)
+		if(response.success){
+			setMiniCards(response.data as miniCard)
+			setLoadingMiniCards(false)
+		}
+		else{
+			toastMessageError(response.message)
+			setLoadingMiniCards(false)
+		}
+
+	}
+
+	useEffect(() => {
+		getminicardsDetials()
+	},[])
+
 	const brandColor = useColorModeValue('brand.500', 'white');
 	const boxBg = useColorModeValue('secondaryGray.300', 'whiteAlpha.100');
 	return (
 		<Box pt={{ base: '130px', md: '80px', xl: '80px' }}>
-			<SimpleGrid columns={{ base: 1, md: 2, lg: 3, '2xl': 6 }} gap='20px' mb='20px'>
+			{!loadingMiniCards && <SimpleGrid columns={{ base: 1, md: 2, lg: 3, '2xl': 6 }} gap='20px' mb='20px'>
 				<MiniStatistics
 					startContent={
 						<IconBox
 							w='56px'
 							h='56px'
-							bg={boxBg}
-							icon={<Icon w='32px' h='32px' as={MdBarChart} color={brandColor} />}
+							bg='linear-gradient(90deg, rgb(67, 24, 255) 0%,rgb(67, 24, 255) 100%)'
+							icon={<Icon w='28px' h='28px' as={MdAddTask} color='white' />}
 						/>
 					}
-					name='Earnings'
-					value='$350.4'
+					name='Verified Blogs'
+					value={miniCards.verified_blogs}
+				/>
+				<MiniStatistics
+					startContent={
+						<IconBox
+							w='56px'
+							h='56px'
+							bg='linear-gradient(90deg, rgba(101,98,98, 1) 0%,  rgba(101,98,98, 1) 100%)'
+							icon={<Icon w='28px' h='28px' as={MdAddTask} color='white' />}
+						/>
+					}
+					name='Unverified Blogs'
+					value={miniCards.unverified_blogs}
 				/>
 				<MiniStatistics
 					startContent={
@@ -64,13 +88,13 @@ export default function UserReports() {
 							w='56px'
 							h='56px'
 							bg={boxBg}
-							icon={<Icon w='32px' h='32px' as={MdAttachMoney} color={brandColor} />}
+							icon={<Icon w='32px' h='32px' as={DocumentIcon} color={brandColor} />}
 						/>
 					}
-					name='Spend this month'
-					value='$642.39'
+					name='Total Blogs'
+					value={miniCards.total_blogs}
 				/>
-				<MiniStatistics growth='+23%' name='Sales' value='$574.34' />
+				{/* <MiniStatistics name="Total Blogs" value={miniCards.total_blogs} />
 				<MiniStatistics
 					endContent={
 						<Flex me='-16px' mt='10px'>
@@ -84,20 +108,32 @@ export default function UserReports() {
 							</Select>
 						</Flex>
 					}
-					name='Your balance'
-					value='$1,000'
+					name='Unverified Blogs'
+					value={"312"}
+				/> */}
+				<MiniStatistics
+					startContent={
+						<IconBox
+							w='56px'
+							h='56px'
+							bg='linear-gradient(90deg, rgb(67, 24, 255) 0%,rgb(67, 24, 255) 100%)'
+							icon={<Icon w='28px' h='28px' as={MdAddTask} color='white' />}
+						/>
+					}
+					name='Active Users'
+					value={miniCards.active_users}
 				/>
 				<MiniStatistics
 					startContent={
 						<IconBox
 							w='56px'
 							h='56px'
-							bg='linear-gradient(90deg, #4481EB 0%, #04BEFE 100%)'
+							bg='linear-gradient(90deg, rgba(101,98,98, 1) 0%,  rgba(101,98,98, 1) 100%)'
 							icon={<Icon w='28px' h='28px' as={MdAddTask} color='white' />}
 						/>
 					}
-					name='New Tasks'
-					value='154'
+					name={"Inactive Users"}
+					value={miniCards.inactive_users}
 				/>
 				<MiniStatistics
 					startContent={
@@ -105,13 +141,13 @@ export default function UserReports() {
 							w='56px'
 							h='56px'
 							bg={boxBg}
-							icon={<Icon w='32px' h='32px' as={MdFileCopy} color={brandColor} />}
+							icon={<Icon w='32px' h='32px' as={PersonIcon} color={brandColor} />}
 						/>
 					}
-					name='Total Projects'
-					value='2935'
+					name={"Total Users"}
+					value={miniCards.total_users}
 				/>
-			</SimpleGrid>
+			</SimpleGrid>}
 
 			<SimpleGrid columns={{ base: 1, md: 2, xl: 2 }} gap='20px' mb='20px'>
 				<TotalSpent />

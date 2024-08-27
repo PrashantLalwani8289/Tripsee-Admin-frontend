@@ -1,20 +1,14 @@
 export const ROUTES = {
     USER_DETAIL: "/user-detail/:userId",
     USER_LIST: "/user-list",
-    DASHBOARD: "/dashboard",
+    DASHBOARD: "/admin/default",
     SETTINGS:"/settings",
     USER_EDIT:"/user-edit/:userId",
     PROFILE: "/profile/:userId",
-    LOGIN: "/login",
-    FORGOT_PASSWORD: "/forgot-password",
-    OTP_VERIFICATION: "/otp-verification",
-    RESET_PASSWORD: "/reset-password",
-    MARKETPLACE: "/marketplace",
-    ADMIN_DASHBOARD: "/admin-dashboard",
-    // ADMIN_NFT_MARKETPLACE: "/admin-marketplace",
-    ADMIN_PROFILE: "/admin-profile",
+    LOGIN: "/auth/sign-in",
+    ADMIN_PROFILE: "/admin/profile",
     ADMIN_DATA_TABLES: "/admin-data-tables",
-    SIGNUP: "/signup"
+    SIGNUP: "auth/sign-up"
   };
   
 
